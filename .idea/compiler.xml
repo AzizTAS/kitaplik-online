@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="config-server" />
         <module name="library-service" />
+        <module name="kitaplik-common" />
         <module name="book-service" />
         <module name="eureka-server" />
         <module name="gateway" />
