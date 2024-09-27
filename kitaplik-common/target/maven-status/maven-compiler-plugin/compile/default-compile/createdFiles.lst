@@ -1,0 +1,17 @@
+com\kitaplik\bookservice\dto\BookId$1.class
+com\kitaplik\bookservice\dto\BookServiceGrpc$BookServiceStub.class
+com\kitaplik\bookservice\dto\BookServiceGrpc$MethodHandlers.class
+com\kitaplik\bookservice\dto\BookId.class
+com\kitaplik\bookservice\dto\BookServiceGrpc$BookServiceImplBase.class
+com\kitaplik\bookservice\dto\BookServiceGrpc.class
+com\kitaplik\bookservice\dto\IsbnOrBuilder.class
+com\kitaplik\bookservice\dto\Book.class
+com\kitaplik\bookservice\dto\Isbn.class
+com\kitaplik\bookservice\dto\Book$1.class
+com\kitaplik\bookservice\dto\Isbn$Builder.class
+com\kitaplik\bookservice\dto\BookServiceGrpc$BookServiceDescriptorSupplier.class
+com\kitaplik\bookservice\dto\Isbn$1.class
+com\kitaplik\bookservice\dto\BookId$Builder.class
+com\kitaplik\bookservice\dto\BookServiceGrpc$BookServiceBlockingStub.class
+com\kitaplik\bookservice\dto\BookServiceGrpc$BookServiceFutureStub.class
+com\kitaplik\bookservice\dto\BookIdOrBuilder.class

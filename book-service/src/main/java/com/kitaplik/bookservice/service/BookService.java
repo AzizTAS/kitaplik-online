@@ -3,6 +3,7 @@ package com.kitaplik.bookservice.service;
 import com.kitaplik.bookservice.dto.BookDto;
 import com.kitaplik.bookservice.dto.BookIdDto;
 import com.kitaplik.bookservice.exception.BookNotFoundException;
+import com.kitaplik.bookservice.model.Book;
 import com.kitaplik.bookservice.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,18 @@ public class BookService {
 
     public BookService(BookRepository repository) {
         this.repository = repository;
+    }
+
+    public BookDto addBook(BookDto bookDto) {
+        if (bookDto.getId() == null || bookDto.getId().getIsbn() == null || bookDto.getId().getIsbn().isEmpty()) {
+            throw new IllegalArgumentException("ISBN is required");
+        }
+
+        Book book = new Book(null, bookDto.getTitle(), bookDto.getBookYear(), bookDto.getAuthor(), bookDto.getPressName(), bookDto.getId().getIsbn());
+
+        repository.save(book);
+
+        return BookDto.convert(book);
     }
 
     public List<BookDto> getAllBooks(){
