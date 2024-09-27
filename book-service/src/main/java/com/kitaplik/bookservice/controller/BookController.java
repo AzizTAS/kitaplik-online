@@ -5,10 +5,12 @@ import com.kitaplik.bookservice.dto.BookDto;
 import com.kitaplik.bookservice.dto.BookIdDto;
 import com.kitaplik.bookservice.service.BookService;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,13 @@ public class BookController {
 
     public BookController(BookService bookService) {
         this.bookService = bookService;
+    }
+
+
+    @PostMapping
+    public ResponseEntity<BookDto> addBook(@RequestBody @Valid BookDto bookDto) {
+        BookDto savedBook = bookService.addBook(bookDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
     }
 
 
