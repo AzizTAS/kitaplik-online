@@ -39,7 +39,6 @@ class LibraryServiceTest {
     @DisplayName("should Return LibraryDto with Detailed BookList With BookDto And Updated LibraryId when the parameter of the getAllBooksInLibraryById LibraryId Exist And Library UserBook List Size More Than Two")
     @Test
     void shouldReturnDetailedBookListWithBookDtoAndUpdatedLibraryId_whenLibraryIdExistAndLibraryUserBookListSizeMoreThan2() {
-        // Test verilerinin hazirlanmasi
         String id = "libraryId";
         List<String> userBook = Arrays.asList("book1", "book2", "book3");
         Library library = new Library(id, userBook);
@@ -48,21 +47,19 @@ class LibraryServiceTest {
         BookDto book3 = new BookDto(new BookIdDto("book3", "isbn"), "title1", 2021, "author1", "press1");
 
         List<BookDto> bookDtoList = Arrays.asList(book1, book2, book3);
-        LibraryDto expectedResult = new LibraryDto(id, bookDtoList); // id'yi değiştirmeden kullanıyoruz
+        LibraryDto expectedResult = new LibraryDto(id, bookDtoList);
 
-        // Bagimli servicelerin davranislarinin belirlenmesi
         Mockito.when(libraryRepository.findById(id)).thenReturn(Optional.of(library));
         Mockito.when(bookServiceClient.getBookById("book1")).thenReturn(ResponseEntity.ok(book1));
         Mockito.when(bookServiceClient.getBookById("book2")).thenReturn(ResponseEntity.ok(book2));
         Mockito.when(bookServiceClient.getBookById("book3")).thenReturn(ResponseEntity.ok(book3));
 
-        // Test edilecek metodun calistirilmasi
         LibraryDto result = libraryService.getAllBooksInLibraryById(id);
 
-        // Test sonuclarinin karsilastirilmasi
+
         assertEquals(expectedResult, result);
 
-        // Bagimli servislerin calisitirilmasinin kontrol edilmesi
+
         Mockito.verify(libraryRepository).findById(id);
         Mockito.verify(bookServiceClient).getBookById("book1");
         Mockito.verify(bookServiceClient).getBookById("book2");
@@ -73,7 +70,7 @@ class LibraryServiceTest {
     @DisplayName("should Return LibraryDto with Detailed BookList With BookDto when the parameter of the getAllBooksInLibraryById LibraryId Exist")
     @Test
     void shouldReturnDetailedBookListWithBookDto_whenLibraryIdExist() {
-        // Test verilerinin hazirlanmasi
+
         String id = "libraryId";
         List<String> userBook = Arrays.asList("book1", "book2");
         Library library = new Library(id, userBook);
@@ -81,20 +78,20 @@ class LibraryServiceTest {
         BookDto book2 = new BookDto(new BookIdDto("book2", "isbn"), "title1", 2021, "author1", "press1");
 
         List<BookDto> bookDtoList = Arrays.asList(book1, book2);
-        LibraryDto expectedResult = new LibraryDto(id, bookDtoList); // id'yi değiştirmeden kullanıyoruz
+        LibraryDto expectedResult = new LibraryDto(id, bookDtoList);
 
-        // Bagimli servicelerin davranislarinin belirlenmesi
+
         Mockito.when(libraryRepository.findById(id)).thenReturn(Optional.of(library));
         Mockito.when(bookServiceClient.getBookById("book1")).thenReturn(ResponseEntity.ok(book1));
         Mockito.when(bookServiceClient.getBookById("book2")).thenReturn(ResponseEntity.ok(book2));
 
-        // Test edilecek metodun calistirilmasi
+
         LibraryDto result = libraryService.getAllBooksInLibraryById(id);
 
-        // Test sonuclarinin karsilastirilmasi
+
         assertEquals(expectedResult, result);
 
-        // Bagimli servislerin calisitirilmasinin kontrol edilmesi
+
         Mockito.verify(libraryRepository).findById(id);
         Mockito.verify(bookServiceClient).getBookById("book1");
         Mockito.verify(bookServiceClient).getBookById("book2");
@@ -104,18 +101,18 @@ class LibraryServiceTest {
     @DisplayName("should Throw LibraryNotFoundException when the parameter of the getAllBooksInLibraryById LibraryId Does Not Exist")
     @Test
     void shouldThrowLibraryNotFoundException_whenLibraryIdDoesNotExist() {
-        // Test verilerinin hazirlanmasi
+
         String id = "libraryId";
 
-        // Bagimli servicelerin davranislarinin belirlenmesi
+
         Mockito.when(libraryRepository.findById(id)).thenReturn(Optional.empty());
 
-        // Test edilecek metodun calistirilmasi
+
         org.assertj.core.api.Assertions.assertThatThrownBy(() -> libraryService.getAllBooksInLibraryById(id))
                 .isInstanceOf(LibraryNotFoundException.class)
                 .hasMessageContaining("Library could not found by id: " + id);
 
-        // Bagimli servislerin calisitirilmasinin kontrol edilmesi
+
         Mockito.verify(libraryRepository).findById(id);
         Mockito.verifyNoInteractions(bookServiceClient);
     }
