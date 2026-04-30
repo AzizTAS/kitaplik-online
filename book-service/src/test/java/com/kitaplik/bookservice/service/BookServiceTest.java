@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -24,6 +25,32 @@ class BookServiceTest {
     void setUp() {
         bookRepository = Mockito.mock(BookRepository.class);
         bookService = new BookService(bookRepository);
+    }
+
+    @DisplayName("should Return BookDto List when getAllBooks Called")
+    @Test
+    void shouldReturnBookDtoList_whenGetAllBooksCalled() {
+        Book book1 = new Book("id-1", "Title One", 2020, "Author One", "Press One", "isbn-1");
+        Book book2 = new Book("id-2", "Title Two", 2021, "Author Two", "Press Two", "isbn-2");
+        List<BookDto> expectedResult = List.of(BookDto.convert(book1), BookDto.convert(book2));
+
+        Mockito.when(bookRepository.findAll()).thenReturn(List.of(book1, book2));
+
+        List<BookDto> result = bookService.getAllBooks();
+
+        assertEquals(expectedResult, result);
+        Mockito.verify(bookRepository).findAll();
+    }
+
+    @DisplayName("should Return Empty List when getAllBooks Called With No Books")
+    @Test
+    void shouldReturnEmptyList_whenGetAllBooksCalledWithNoBooks() {
+        Mockito.when(bookRepository.findAll()).thenReturn(List.of());
+
+        List<BookDto> result = bookService.getAllBooks();
+
+        assertEquals(List.of(), result);
+        Mockito.verify(bookRepository).findAll();
     }
 
     @DisplayName("should Return BookDto when addBook Called With Valid BookDto")
