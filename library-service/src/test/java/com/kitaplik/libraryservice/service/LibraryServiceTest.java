@@ -2,6 +2,7 @@ package com.kitaplik.libraryservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kitaplik.libraryservice.client.BookServiceClient;
+import com.kitaplik.libraryservice.dto.AddBookRequest;
 import com.kitaplik.libraryservice.dto.BookDto;
 import com.kitaplik.libraryservice.dto.BookIdDto;
 import com.kitaplik.libraryservice.dto.LibraryDto;
@@ -13,6 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.internal.verification.Times;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -115,6 +117,70 @@ class LibraryServiceTest {
 
         Mockito.verify(libraryRepository).findById(id);
         Mockito.verifyNoInteractions(bookServiceClient);
+    }
+
+    @DisplayName("should Save New Library And Return LibraryDto With New Id When createLibrary Called")
+    @Test
+    void shouldSaveNewLibraryAndReturnLibraryDtoWithNewId_whenCreateLibraryCalled() {
+        Library savedLibrary = new Library("new-library-id", new ArrayList<>());
+        Mockito.when(libraryRepository.save(Mockito.any(Library.class))).thenReturn(savedLibrary);
+
+        LibraryDto result = libraryService.createLibrary();
+
+        assertEquals("new-library-id", result.getId());
+        Mockito.verify(libraryRepository).save(Mockito.any(Library.class));
+    }
+
+    @DisplayName("should Add BookId To Library When addBookToLibrary Called With Valid Request")
+    @Test
+    void shouldAddBookIdToLibrary_whenAddBookToLibraryCalledWithValidRequest() {
+        String libraryId = "library-id";
+        String isbn = "some-isbn";
+        String bookId = "book-id";
+        AddBookRequest request = new AddBookRequest(libraryId, isbn);
+        Library library = new Library(libraryId, new ArrayList<>());
+        BookIdDto bookIdDto = new BookIdDto(bookId, isbn);
+
+        Mockito.when(bookServiceClient.getBookByIsbn(isbn)).thenReturn(ResponseEntity.ok(bookIdDto));
+        Mockito.when(libraryRepository.findById(libraryId)).thenReturn(Optional.of(library));
+
+        libraryService.addBookToLibrary(request);
+
+        Mockito.verify(bookServiceClient).getBookByIsbn(isbn);
+        Mockito.verify(libraryRepository).findById(libraryId);
+        Mockito.verify(libraryRepository).save(library);
+    }
+
+    @DisplayName("should Throw LibraryNotFoundException When addBookToLibrary Called With Non-Existing Library Id")
+    @Test
+    void shouldThrowLibraryNotFoundException_whenAddBookToLibraryCalledWithNonExistingLibraryId() {
+        String libraryId = "non-existing-id";
+        String isbn = "some-isbn";
+        AddBookRequest request = new AddBookRequest(libraryId, isbn);
+        BookIdDto bookIdDto = new BookIdDto("book-id", isbn);
+
+        Mockito.when(bookServiceClient.getBookByIsbn(isbn)).thenReturn(ResponseEntity.ok(bookIdDto));
+        Mockito.when(libraryRepository.findById(libraryId)).thenReturn(Optional.empty());
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(() -> libraryService.addBookToLibrary(request))
+                .isInstanceOf(LibraryNotFoundException.class)
+                .hasMessageContaining("Library could not found by id: " + libraryId);
+
+        Mockito.verify(libraryRepository).findById(libraryId);
+        Mockito.verify(libraryRepository, Mockito.never()).save(Mockito.any());
+    }
+
+    @DisplayName("should Return All Library Ids When getAllLibraries Called")
+    @Test
+    void shouldReturnAllLibraryIds_whenGetAllLibrariesCalled() {
+        Library library1 = new Library("id-1", new ArrayList<>());
+        Library library2 = new Library("id-2", new ArrayList<>());
+        Mockito.when(libraryRepository.findAll()).thenReturn(Arrays.asList(library1, library2));
+
+        List<String> result = libraryService.getAllLibraries();
+
+        assertEquals(Arrays.asList("id-1", "id-2"), result);
+        Mockito.verify(libraryRepository).findAll();
     }
 
     @AfterEach
